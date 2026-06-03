@@ -1,21 +1,22 @@
+from repository import usuario_repository
+from services import usuario_service
+from views import usuario_view
 from models import usuario
-from models import habitos
-from models import registros
-from models import consultas_user
-from models import consultas_admin
 from tests import test_conexao
 from database.conexao import db
 test_conexao.testar_conexao()
-# def Menu():
-#     while True:
-#         usuario_login = usuario.Usuario.usuario_logado
-#         if usuario_login is not None and usuario_login != "admin@":
-#             MenuLogado(usuario_login,db)
-#         elif usuario_login == "admin@":
-#             MenuAdmin(db)
-#         else:
-#             if not MenuSemLogin():
-#                 break
+def Menu():
+    while True:
+        usuario_login = usuario.Usuario.usuario_logado
+        if usuario_login is not None and usuario_login != "admin@":
+            # MenuLogado(usuario_login,db)
+            pass
+        elif usuario_login == "admin@":
+            # MenuAdmin(db)
+            pass
+        else:
+            if not usuario_view.MenuSemLogin():
+                break
 
 # def MenuLogado(usuario_login,db):
 #         usuarioo = db.ConsultarIDLogin(usuario_login)
@@ -47,23 +48,7 @@ test_conexao.testar_conexao()
 #                 registros.Main(db,usuario_login)
 #             case _:
 #                 print("Opção Inválida!")
-# def MenuSemLogin():
-#     print('''
-#             ╔══════════════════════════════════════════════╗
-#             ║  Bem-vindo ao Sistema de Gestão de Hábitos   ║
-#             ╚══════════════════════════════════════════════╝
-#               1. Acessar Sistema ✅
-#               2. Sair ✅
-#               ''')
-#     op = int(input("Indique a opção desejada: "))
-#     match op:
-#         case 1:
-#             usuario.Main(db)
-#             return True
-#         case 2:
-#             return False
-#         case _:
-#             print("Opção Inválida!")
+
 # def MenuAdmin(db):
 #     print('''
 #         ╔══════════════════════════════╗
@@ -97,6 +82,6 @@ test_conexao.testar_conexao()
 #             consultas_admin.MostrarBaixoDesempenho(users)
 #         case _:
 #             print("Opção Inválida!")
-# def Main():
-#     Menu()
-# Main()
+def Main():
+    Menu()
+Main()
