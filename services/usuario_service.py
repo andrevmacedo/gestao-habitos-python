@@ -1,7 +1,9 @@
 from models.usuario import Usuario
-from repository import usuario_repository
+from repository.usuario_repository import UsuarioRepository
+from database.conexao import db
+repo = UsuarioRepository(db)
 def Login(email,senha):
-    resultado = usuario_repository.UsuarioRepository.VerificarLogin(email,senha)
+    resultado = repo.VerificarLogin(email,senha)
     if resultado: 
         Usuario.LoginSistema(email)
     return resultado
@@ -10,12 +12,15 @@ def Cadastrar(nome,email,senha,confirm):
         return "Necessário '@'!"
     if not Usuario.ConfirmarSenha(senha,confirm):
         return "Senhas não Conferem!"
-    if usuario_repository.UsuarioRepository.VerificarEmail(email):
+    if repo.VerificarEmail(email):
         return "Email já Cadastrado!"
     usuario = Usuario(nome,email,senha)
-    if usuario_repository.UsuarioRepository.CadastrarUsuario(usuario):
-        return "Cadastro Realizado com Sucesso!"
+    if repo.CadastrarUsuario(usuario):
+        return "Cadastro realizado com Sucesso!"
     else:
         return "Erro ao Cadastrar Usuário!"
-
+def Logout():
+    Usuario.LogoutSistema()
+def ConsultarIDEmail(email):
+    return repo.ConsultarIDEmail(email)
     

@@ -1,4 +1,3 @@
-from models.usuario import Usuario
 from services import usuario_service
 import pwinput
 def MenuSemLogin():

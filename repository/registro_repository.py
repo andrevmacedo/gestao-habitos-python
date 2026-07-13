@@ -4,7 +4,7 @@ class RegistroRepository:
     def CadastrarRegistro(self,registro):
         self._db.cursor.execute("insert into registro values (?,?,?,?,?,?)",(None,registro._idhabito,registro._idusuario,registro._data,registro._descricao,registro._status))
         self._db.commit()
-        return self.cursor.lastrowid
+        return self._db.cursor.lastrowid
     def VerificarRegistroDiario(self,idhabito,data):
         self._db.cursor.execute('''
                         select * from registro where id_habito = ? and data = ?
