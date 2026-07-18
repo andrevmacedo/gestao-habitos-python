@@ -1,7 +1,7 @@
 from services import habito_service
-def MenuHabitos(db,usuario_login):
+def MenuHabitos(usuario_login):
     while True: 
-        usuario = db.ConsultarIDLogin(usuario_login)
+        usuario = habito_service.ConsultarUsuario(usuario_login)
         print('''
             1. Criar Hábito
             2. Editar Hábito
@@ -15,43 +15,18 @@ def MenuHabitos(db,usuario_login):
             case 0:
                 return
             case 1:
-                habito = CadastrarHabito()
-                if db.CriarHabito(habito,usuario):
-                    print("Hábito Cadastrado!")
-                else:
-                    print("Erro ao cadastrar Hábito!")
+                CadastrarHabito(usuario)
             case 2:
-                resultado = EditarHabito(db,usuario)
-                if resultado:
-                    coluna,alterar,idhabito = resultado
-                    confirm = db.AlterarHabito(coluna,alterar,idhabito)
-                    if confirm == True:
-                        print("Hábito alterado com Sucesso!")
-                    else:
-                        print(f"Erro ao alterar hábito!Erro: {confirm}")
-                else:
-                    print("Hábito não Encontrado!")
+                EditarHabito(usuario)
             case 3:
-                idexcluir = ExcluirHabito(db,usuario)
-                if idexcluir:
-                    db.ExcluirHabito(idexcluir)
-                    print("Hábito excluído com Sucesso!")
-                else:
-                    print("Operação Cancelada ou ID não Encontrado!")
+                ExcluirHabito(usuario)
             case 4:
-                iddesativar = EditarStatusHabito(db,usuario)
-                if iddesativar:
-                    db.AlterarStatusHabito(iddesativar)
-                    print("Status alterado com Sucesso!")
-                else:
-                    print("Operação Cancelada ou ID não Encontrado!")
+                EditarStatusHabito(usuario)
             case 5:
-                busca = ListarHabitos(db,usuario)
-                if not busca:
-                    print("Erro ou Hábitos não Encontrados!")
+                ListarHabitos(usuario)
             case _:
                 print("Opção Inválida!")
-def CadastrarHabito():
+def CadastrarHabito(usuario):
     nome = input("Digite o nome do hábito: ")
     descricao = input("Descreva...\n")
     dificuldade = int(input('''
@@ -59,9 +34,8 @@ def CadastrarHabito():
                     2. Médio
                     3. Difícil
                     Indique a dificuldade: '''))
-    definicao = Habitos.DefinirDificuldade(dificuldade)
-    habito = Habitos(nome,descricao,definicao)
-    return habito
+    resultado = habito_service.Cadastrar(nome,descricao,dificuldade,usuario)
+    print(resultado)
 def MostrarHabito(dados):
     print(f'''
         ID do Hábito: {dados[0]}
@@ -80,31 +54,20 @@ def AlterarAtributosHabito(dados):
             Indique o que deseja alterar: '''))
     match op:
         case 1:
-            coluna = "nome"
-            alterar = input("Digite o novo nome: ")
-            return coluna,alterar
+            return "nome",input("Digite o novo nome: ")
         case 2:
-            coluna = "descricao"
-            alterar = input("Nova descrição...\n")
-            return coluna,alterar
+            return "descricao",input("Nova descrição...\n")
         case 3:
-            coluna = "dificuldade"
-            alterar = int(input('''
-            1. Fácil
-            2. Médio
-            3. Difícil
-            Indique a dificuldade: '''))
-            dificuldade = Habitos.DefinirDificuldade(alterar)
-            while not Habitos.VerificarDificuldade(dados,dificuldade):
+            while True:
                 alterar = int(input('''
-            *Dificuldade semelhante a anterior!
-            1. Fácil
-            2. Médio
-            3. Difícil
-            Indique a novamente dificuldade: '''))
-                dificuldade = Habitos.DefinirDificuldade(alterar)
-                Habitos.VerificarDificuldade(dados,dificuldade)
-            return coluna,dificuldade
+                1. Fácil
+                2. Médio
+                3. Difícil
+                Indique a dificuldade: '''))
+                dificuldade = habito_service.VerificarDificuldade(dados,alterar)
+                if dificuldade:
+                    return "dificuldade",dificuldade
+                print("*Dificuldade semelhante a anterior!")
         case _:
             return False
 def ConfirmarAlteracao():
@@ -120,6 +83,7 @@ def ConfirmarAlteracao():
             return False
         case _:
             print("Opção Inválida!")
+            return False 
 def MostrarTodosHabitos(dados):
     for idhabito,idusuario,idusuario2,email,nome,descricao,dificuldade,status in dados:
         print(f'''
@@ -130,3 +94,43 @@ def MostrarTodosHabitos(dados):
         Diculdade: {dificuldade}
         Status: {status}
               ''')
+def EditarHabito(usuario):
+    idhabito = int(input("Digite o ID do Hábito que deseja alterar: "))
+    dados = habito_service.BuscarHabito(idhabito,usuario)
+    if not dados: 
+        print("Hábito não Encontrado!")
+        return
+    MostrarHabito(dados)
+    resultado = AlterarAtributosHabito(dados)
+    if not resultado:
+        print("Opção Inválida!")
+    coluna, alterar = resultado
+    print(habito_service.EditarHabito(coluna, alterar, idhabito))
+def ExcluirHabito(usuario):
+    idhabito = int(input("Digite o ID que deseja EXCLUIR: "))
+    dados = habito_service.BuscarHabito(idhabito,usuario)
+    if not dados:
+        print("Hábito não encontrado!")
+        return
+    MostrarHabito(dados)
+    if ConfirmarAlteracao():
+        print(habito_service.Excluir(idhabito))
+    else:
+        print("Operação Cancelada!")
+def EditarStatusHabito(usuario):
+    idhabito = int(input("Digite o ID do Hábito que deseja DESATIVAR: "))
+    dados = habito_service.BuscarHabito(idhabito,usuario)
+    if not dados:
+        print("Hábito não encontrado!")
+        return
+    MostrarHabito(dados)
+    if ConfirmarAlteracao():
+        print(habito_service.AlterarStatus(idhabito))
+    else:
+        print("Operação Cancelada!")
+def ListarHabitos(usuario):
+    dados = habito_service.Listar(usuario)
+    if dados:
+        MostrarTodosHabitos(dados)
+    else:
+        print("Erro ou Hábitos não Encontrados!")        
