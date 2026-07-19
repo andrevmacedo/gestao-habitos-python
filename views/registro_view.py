@@ -1,7 +1,7 @@
-from services import registro_service
+from services import registro_service, habito_service, usuario_service
 def MenuRegistros(usuario_login):
+    usuario = usuario_service.ConsultarIDEmail(usuario_login)
     while True:
-        usuario = registro_service.ConsultarUsuario(usuario_login)
         print('''
         0. Voltar ao Menu Principal
         1. Registrar execução diária
@@ -14,10 +14,7 @@ def MenuRegistros(usuario_login):
             case 1:
                 RegistrarExecucao(usuario)
             case 2:
-                if AtualizarRegistro(db,usuario):
-                   print("Alteração realizada com Sucesso!")
-                else:
-                    print("Registro não encontrado ou Já registrado!")
+                AtualizarRegistro(usuario)
             case _:
                 print("Opção Inválida")
 def MostrarNotaExecucao(dados,data):
@@ -44,7 +41,7 @@ def MostrarRegistro(dados):
 def RegistrarExecucao(usuario):
     data = registro_service.get_DataAtual()
     idhabito = int(input("Digite o ID que deseja registrar: "))
-    habito = registro_service.ConsultarHabito(idhabito,usuario)
+    habito = habito_service.BuscarHabito(idhabito,usuario)
     if not habito or habito[7] == "Desativado":
         print("Hábito não encontrado ou Hábito desativado!")
         return
@@ -71,7 +68,7 @@ def ConfirmarExecucao():
             return False
         case _:
             return False
-def AtualizarRegistro(db,usuario):
+def AtualizarRegistro(usuario):
     idhabito = input("""
         OBS: *Você apenas pode alterar hábitos 
             não realizados no dia anterior!*
@@ -79,11 +76,9 @@ def AtualizarRegistro(db,usuario):
     dados = registro_service.ConsultarNRealizados(idhabito)
     if not dados:
         print("Hábito já registrado!")
+        return
     MostrarRegistro(dados)
     descricao = input('''Descrição...
     ''')
-    if db.AlterarRegistro(usuario,idhabito,descricao,Registros.ontem):
-        return True
-    else:
-        return False
+    print(registro_service.AlterarRegistro(usuario,idhabito,descricao))
     

@@ -1,11 +1,7 @@
 from models.habitos import Habitos
 from repository.habito_repository import HabitoRepository
-from repository.usuario_repository import UsuarioRepository
 from database.conexao import db
 repo_habito = HabitoRepository(db)
-repo_user = UsuarioRepository(db)
-def ConsultarUsuario(usuario_login):
-    return repo_user.ConsultarIDEmail(usuario_login)
 def Cadastrar(nome,descricao,dificuldade,usuario):
     habito = Habitos(nome,descricao,Habitos.definir_dificuldade(dificuldade))
     if repo_habito.CriarHabito(habito,usuario):

@@ -24,7 +24,7 @@ class RegistroRepository:
                             ''',(usuario[0],data,))
         return self._db.cursor.fetchall()
     def RegistrarHabitosNAOFeitos(self,idhabito,idusuario,ontem):
-        self._db.conn.execute('''
+        self._db.conn.executemany('''
                 insert into registro values (?,?,?,?,?,?)
                           ''',(None,idhabito,idusuario,ontem,"Não Realizado",0))
         self._db.commit()

@@ -13,13 +13,5 @@ class Registros:
         return date.today().strftime("%Y-%m-%d")
 
 
-# def HabitosNaoConcluidos(db,usuario):
-#     dados = db.ConsultarHabitosNaoConcluidos(usuario,Registros.ontem)
-#     if dados:
-#         for idusuario,idhabito in dados:
-#             db.RegistrarHabitosNAOFeitos(idhabito,idusuario,Registros.ontem)
-#         return True
-#     else:
-#         return False
 
 

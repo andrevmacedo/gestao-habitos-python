@@ -1,7 +1,7 @@
-from services import habito_service
+from services import habito_service, usuario_service
 def MenuHabitos(usuario_login):
     while True: 
-        usuario = habito_service.ConsultarUsuario(usuario_login)
+        usuario = usuario_service.ConsultarIDEmail(usuario_login)
         print('''
             1. Criar Hábito
             2. Editar Hábito
