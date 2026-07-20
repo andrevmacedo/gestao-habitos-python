@@ -16,7 +16,7 @@ def Cadastrar(nome,email,senha,confirm):
         return "Email já Cadastrado!"
     usuario = Usuario(nome,email,senha)
     if repo.CadastrarUsuario(usuario):
-        return "Cadastro realizado com Sucesso!"
+        return "Cadastro realizado com sucesso!"
     else:
         return "Erro ao Cadastrar Usuário!"
 def Logout():

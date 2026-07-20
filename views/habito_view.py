@@ -1,7 +1,7 @@
 from services import habito_service, usuario_service
 def MenuHabitos(usuario_login):
+    usuario = usuario_service.ConsultarIDEmail(usuario_login)
     while True: 
-        usuario = usuario_service.ConsultarIDEmail(usuario_login)
         print('''
             1. Criar Hábito
             2. Editar Hábito
@@ -104,6 +104,7 @@ def EditarHabito(usuario):
     resultado = AlterarAtributosHabito(dados)
     if not resultado:
         print("Opção Inválida!")
+        return
     coluna, alterar = resultado
     print(habito_service.EditarHabito(coluna, alterar, idhabito))
 def ExcluirHabito(usuario):

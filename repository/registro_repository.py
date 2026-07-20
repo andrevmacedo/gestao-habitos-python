@@ -23,10 +23,10 @@ class RegistroRepository:
                     and registro.data = ?)
                             ''',(usuario[0],data,))
         return self._db.cursor.fetchall()
-    def RegistrarHabitosNAOFeitos(self,idhabito,idusuario,ontem):
+    def RegistrarHabitosNAOFeitos(self,registros):
         self._db.conn.executemany('''
                 insert into registro values (?,?,?,?,?,?)
-                          ''',(None,idhabito,idusuario,ontem,"Não Realizado",0))
+                          ''',registros)
         self._db.commit()
     def ConsultarRegistroNAOFeito(self,idhabito,data):
         self._db.cursor.execute('''

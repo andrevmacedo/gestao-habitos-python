@@ -64,8 +64,8 @@ def ListarHabitosConcluidos(dados):
         print(f'''
                 ID do Hábito: {idhabito}
                 Hábito: {habito}
-                Dificuldade: {descricao}
-                Descrição do Hábito: {dificuldade}
+                Dificuldade: {dificuldade}
+                Descrição do Hábito: {descricao}
                 Data de Realização: {data}
                 Descrição da Realização: {nota}
                 Status: {status_texto}
