@@ -91,7 +91,7 @@ def MostrarTodosHabitos(dados):
         Usuário: {email}
         Hábito: {nome}
         Descrição: {descricao}
-        Diculdade: {dificuldade}
+        Dificuldade: {dificuldade}
         Status: {status}
               ''')
 def EditarHabito(usuario):
