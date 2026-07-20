@@ -27,6 +27,7 @@ def CalcularStreakPorHabito(dados_banco):
     contando de trás para frente a partir da data mais recente.
     Retorna dicionário: { nome_habito: { 'streak': N } }
     """
+    hoje = Registros.hoje
     resultado = {}
     for datas_str, nome in dados_banco:
         datas = sorted([
@@ -34,7 +35,7 @@ def CalcularStreakPorHabito(dados_banco):
             for d in datas_str.split(",")
         ])
         # se não tem datas ou última data foi há mais de 1 dia, streak é 0
-        if not datas or (Registros.hoje - datas[-1]).days > 1:
+        if not datas or (hoje - datas[-1]).days > 1:
             resultado[nome] = {"streak": 0}
             continue
         cont = 0
@@ -83,3 +84,13 @@ def AtualizarStreakUsuario(usuario):
     repo_streak.RegistrarStreakUnico(registro)
     melhor_streak = repo_streak.BuscarMelhorStreak(usuario)
     return registro, datas_banco, streak_geral, streak_por_habito, melhor_streak
+def ResumoHabitos(usuario):
+    return repo_habito.TotalHabitos(usuario), repo_registro.HabitosConclAband(usuario), repo_habito.MelhorHabito(usuario)
+def ListarConcluidos(usuario):
+    hoje = Registros.get_DataFormatada()
+    return repo_registro.ListarHabitosConcluidosHoje(usuario,hoje)
+def ListarNConcluidos(usuario):
+    hoje = Registros.get_DataFormatada()
+    return repo_registro.ListarHabitosNConcluidosHoje(usuario,hoje)
+def AtualizarStreakUnico(registro):
+    return repo_streak.AtualizarStreakUnico(registro)

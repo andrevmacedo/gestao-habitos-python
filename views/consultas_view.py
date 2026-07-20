@@ -1,7 +1,7 @@
-from services import streak_service
-def MenuConsultas(db,usuario_login):
+from services import streak_service, usuario_service
+def MenuConsultas(usuario_login):
+    usuario = usuario_service.ConsultarIDEmail(usuario_login)
     while True:
-        usuario = db.ConsultarIDLogin(usuario_login)
         print('''
             ===== MÉTRICAS DE PRODUTIVIDADE =====
                 0. Voltar ao Menu Principal
@@ -16,43 +16,46 @@ def MenuConsultas(db,usuario_login):
             case 0:
                 return
             case 1:
-                total = db.TotalHabitos(usuario)
-                if total:
-                    realizado = db.HabitosConclAband(usuario)
-                    melhor = db.MelhorHabito(usuario)
+                resultado = streak_service.ResumoHabitos(usuario)
+                if resultado:
+                    total,realizado,melhor = resultado
                     ResumoGeral(total,realizado,melhor)
                 else:
                     print("Nenhum Hábito cadastrado!")
             case 2:
-                dados = db.ListarHabitosConcluidosHoje(usuario,Registros.hoje)
+                dados = streak_service.ListarConcluidos(usuario)
                 if dados:
                     ListarHabitosConcluidos(dados)
                 else:
                     print("Nenhum Hábito cadastrado Hoje!")
             case 3:
-                dados1 = db.ListarHabitosNConcluidosHoje(usuario,Registros.hoje)
+                dados1 = streak_service.ListarNConcluidos(usuario)
                 if dados1:
                     ListarHabitosNConcluidos(dados1)
                 else:
                     print("Nenhum Hábito encontrado ou TODOS Hábitos foram cadastrados Hoje!")
             case 4:
-                resultado = AtualizarStreakUsuario(db,usuario)
-                if resultado:
-                    registro, steakgeneral, streak, streakporhabito, melhorsteak = resultado
-                    if registro:
-                        SteakGeral(steakgeneral,streak,streakporhabito,melhorsteak)
-                else:
+                resultado = streak_service.AtualizarStreakUsuario(usuario)
+                if not resultado:
                     print("Nenhum Hábito encontrado!")
+                else:
+                    registro, streakgeneral, streak, streakporhabito, melhorstreak = resultado
+                    if registro:
+                        StreakGeral(streakgeneral,streak,streakporhabito,melhorstreak)
             case _:
                 print("Opção Inválida!")
 def ResumoGeral(total,realizado,melhor):
+    if realizado[0]:
+        taxa = (realizado[1] / realizado[0] * 100)
+    else:
+        taxa = 0
     print(f'''
                     ===== RESUMO =====
                 Total de hábitos: {total[0]}
                 Total de registros: {realizado[0]}
                 Concluídos: {realizado[1]}
                 Abandonados: {realizado[2]}
-                Taxa de conclusão: {((realizado[1]/realizado[0])*100):.2f}%
+                Taxa de conclusão: {taxa:.2f}%
                 Melhor hábito: {melhor[1]}
                     ==================
     ''')
@@ -72,8 +75,8 @@ def ListarHabitosNConcluidos(dados1):
         print(f'''
                 ID do Hábito: {idhabito}
                 Hábito: {habito}
-                Dificuldade: {descricao}
-                Descrição do Hábito: {dificuldade}
+                Dificuldade: {dificuldade}
+                Descrição do Hábito: {descricao}
             ''')
 def StreakGeral(steakgeneral,streak,streakporhabito,melhorsteak):
     print(f'''
@@ -88,7 +91,7 @@ def StreakGeral(steakgeneral,streak,streakporhabito,melhorsteak):
             📌 STREAK POR HÁBITO:''')
     for habito, sequencia in streakporhabito.items():
         print(f'''  
-            🧠 {habito}: {sequencia["steak"]} dias 🔥''')
+            🧠 {habito}: {sequencia["streak"]} dias 🔥''')
     print('''        
         ---------------------------------
         🚀 Continue assim! Você está quase batendo seu recorde!
